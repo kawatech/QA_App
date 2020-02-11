@@ -123,6 +123,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             // ログイン済みのユーザーを取得する
+
             val user = FirebaseAuth.getInstance().currentUser
 
             if (user == null) {
@@ -155,6 +156,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mListView = findViewById(R.id.listView)
         mAdapter = QuestionsListAdapter(this)
         mQuestionArrayList = ArrayList<Question>()
+        // Adapterにデータの内容が変更になったことを通知して再描画する
         mAdapter.notifyDataSetChanged()
         // --- ここまで追加する 8.5---
 
@@ -200,6 +202,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
+
         val id = item.itemId
 
         if (id == R.id.nav_hobby) {
@@ -214,6 +218,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else if (id == R.id.nav_compter) {
             mToolbar.title = "コンピューター"
             mGenre = 4
+        } else if(id == R.id.nav_favority) {
+            val intent = Intent(applicationContext, FavoritiesActivity::class.java)
+            startActivity(intent)
         }
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)

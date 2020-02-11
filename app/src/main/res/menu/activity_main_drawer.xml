@@ -14,5 +14,8 @@
         <item
             android:id="@+id/nav_compter"
             android:title="コンピューター"/>
+        <item
+            android:id="@+id/nav_favority"
+            android:title="お気に入り一覧へ移動"/>
     </group>
 </menu>
