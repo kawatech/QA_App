@@ -77,8 +77,16 @@ class QuestionDetailActivity : AppCompatActivity() {
             favoritBtn.setVisibility(View.INVISIBLE)
         }
 
+        // お気に入りボタンをタップしたとき
         favoritBtn.setOnClickListener { v ->
-            favoritBtn.text="お気に入り（削除）"
+         //   favoritBtn.text="お気に入り（削除）"
+            val dataBaseReference = FirebaseDatabase.getInstance().reference
+            val favoritRef = dataBaseReference.child(FavoritPATH)
+            val data = HashMap<String, String>()
+            data["favorit"] = "abcde"
+            favoritRef.setValue(data)
+
+
         }
 
         fab.setOnClickListener {
