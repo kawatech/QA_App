@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var mToolbar: Toolbar
     private var mGenre = 0
+    private val mFavorite ="dummy"                  // 仮にdummyとしておく
 
     // --- ここから 8.5---
     private lateinit var mDatabaseReference: DatabaseReference
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
             val answerArrayList = ArrayList<Answer>()
+
             val answerMap = map["answers"] as Map<String, String>?
             if (answerMap != null) {
                 for (key in answerMap.keys) {
@@ -58,8 +60,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
 
+
+
+//            val question = Question(title, body, name, uid, dataSnapshot.key ?: "",
+//                mGenre, bytes, answerArrayList)
             val question = Question(title, body, name, uid, dataSnapshot.key ?: "",
-                mGenre, bytes, answerArrayList)
+                mGenre, bytes, answerArrayList, favoriteArrayList)
+
+
             mQuestionArrayList.add(question)
             mAdapter.notifyDataSetChanged()
         }

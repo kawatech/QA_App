@@ -1,6 +1,5 @@
 package jp.techacademy.naoki.kawamata.qa_app
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -62,8 +61,10 @@ class QuestionDetailActivity : AppCompatActivity() {
         mQuestion = extras.get("question") as Question
 
         title = mQuestion.title
+  //      title = mQuestion.favorite       // お気に入りにアクセス
+        title =mQuestion.uid
 
-        // ListViewの準備
+                // ListViewの準備
         mAdapter = QuestionDetailListAdapter(this, mQuestion)
         listView.adapter = mAdapter
         mAdapter.notifyDataSetChanged()
@@ -72,23 +73,37 @@ class QuestionDetailActivity : AppCompatActivity() {
         // ログインなら「お気に入り」ボタン表示する。そうでなければ非表示
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
-            favoritBtn.setVisibility(View.VISIBLE)
+            favoriteBtn.setVisibility(View.VISIBLE)
         } else {
-            favoritBtn.setVisibility(View.INVISIBLE)
+            favoriteBtn.setVisibility(View.INVISIBLE)
         }
+
+
+        val favoriteArrayList = ArrayList<String>()
+        val favoriteMap = map["favorite"] as Map<String, String>?
+        if(favoriteMap != null) {
+            for (key in favoriteMap.keys) {
+                //           favoriteArrayList.add(key)
+            }
+        }
+
 
         // お気に入りボタンをタップしたとき
-        favoritBtn.setOnClickListener { v ->
+        // favoriteになければ追加する。あれば削除する。
+        favoriteBtn.setOnClickListener { v ->
          //   favoritBtn.text="お気に入り（削除）"
+            val uid = mQuestion.uid
+            val quid = mQuestion.questionUid
+            val genre = mQuestion.genre
             val dataBaseReference = FirebaseDatabase.getInstance().reference
-            val favoritRef = dataBaseReference.child(FavoritPATH)
+            val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
             val data = HashMap<String, String>()
-            data["favorit"] = "abcde"
-            favoritRef.setValue(data)
-
-
+            data["genre"] = genre.toString()
+            favoritRef.setValue(data)             // 登録するとき
+           //favoritRef.removeValue()                 // 削除するとき
         }
-
+/*
+    // favoriteに登録しているユーザーIDかどうかの判定
         fab.setOnClickListener {
             // ログイン済みのユーザーを取得する
             val user = FirebaseAuth.getInstance().currentUser
@@ -106,7 +121,7 @@ class QuestionDetailActivity : AppCompatActivity() {
                 // --- ここまで ---
             }
         }
-
+*/
         val dataBaseReference = FirebaseDatabase.getInstance().reference
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
