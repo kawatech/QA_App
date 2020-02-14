@@ -1,6 +1,8 @@
 package jp.techacademy.naoki.kawamata.qa_app
 
+import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.google.firebase.auth.FirebaseAuth
@@ -12,8 +14,43 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mQuestion: Question
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
+    private lateinit var mFavoriteRef: DatabaseReference
+
+// onChile*() の関数はやることが無くても全部入れておく。
+    private val mFavoriteListener = object : ChildEventListener {
+        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
+            val favoriteUid = dataSnapshot.key ?: ""
+
+            // Preferenceからログイン中のユーザーIDを取得する
+            val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            val curruid = sp.getString(LoginID, "")
+
+            // ログインユーザーIDと同じものがあれば、ボタン表示を削除にする
+            if (favoriteUid == curruid) {
+                favoriteBtn.text = "お気に入り（削除）"
+            }
+        }
+        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
+
+        }
+
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+
+        }
+
+        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
+
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
+        }
+    }
+
+
 
     private val mEventListener = object : ChildEventListener {
+
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val map = dataSnapshot.value as Map<String, String>
 
@@ -52,6 +89,9 @@ class QuestionDetailActivity : AppCompatActivity() {
         }
     }
 
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_detail)
@@ -62,48 +102,49 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         title = mQuestion.title
   //      title = mQuestion.favorite       // お気に入りにアクセス
-        title =mQuestion.uid
+  //      title =mQuestion.uid
 
                 // ListViewの準備
         mAdapter = QuestionDetailListAdapter(this, mQuestion)
         listView.adapter = mAdapter
         mAdapter.notifyDataSetChanged()
 
-        // 課題
-        // ログインなら「お気に入り」ボタン表示する。そうでなければ非表示
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            favoriteBtn.setVisibility(View.VISIBLE)
-        } else {
-            favoriteBtn.setVisibility(View.INVISIBLE)
-        }
 
 
-        val favoriteArrayList = ArrayList<String>()
-        val favoriteMap = map["favorite"] as Map<String, String>?
-        if(favoriteMap != null) {
-            for (key in favoriteMap.keys) {
-                //           favoriteArrayList.add(key)
+        /*
+            val map = dataSnapshot.value as Map<String, String>
+
+            val favoriteMap = map["favorite"] as Map<String, String>?
+            if (favoriteMap != null) {
+                for (key in favoriteMap.keys) {
+                    //           favoriteArrayList.add(key)
+                }
             }
-        }
+*/
 
+        val dataBaseReference = FirebaseDatabase.getInstance().reference
+ //       val favoRef =  dataBaseReference.child(FavoritePATH).child(mQuestion.questionUid)
 
-        // お気に入りボタンをタップしたとき
+        // お気に入りボタンをタップしたとき、ログインしているユーザーの「お気に入り」に登録
         // favoriteになければ追加する。あれば削除する。
         favoriteBtn.setOnClickListener { v ->
          //   favoritBtn.text="お気に入り（削除）"
             val uid = mQuestion.uid
+        //db    val uid = FirebaseAuth.getInstance().currentUser.toString()     // これは停止する
             val quid = mQuestion.questionUid
             val genre = mQuestion.genre
+
             val dataBaseReference = FirebaseDatabase.getInstance().reference
             val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
             val data = HashMap<String, String>()
             data["genre"] = genre.toString()
             favoritRef.setValue(data)             // 登録するとき
-           //favoritRef.removeValue()                 // 削除するとき
+           //favoritRef.removeValue()                 // 削除するとき、favoriteから全部なくなる
         }
-/*
-    // favoriteに登録しているユーザーIDかどうかの判定
+
+
+
+
         fab.setOnClickListener {
             // ログイン済みのユーザーを取得する
             val user = FirebaseAuth.getInstance().currentUser
@@ -121,9 +162,33 @@ class QuestionDetailActivity : AppCompatActivity() {
                 // --- ここまで ---
             }
         }
-*/
-        val dataBaseReference = FirebaseDatabase.getInstance().reference
+
+   //     val dataBaseReference = FirebaseDatabase.getInstance().reference
         mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
         mAnswerRef.addChildEventListener(mEventListener)
     }
+
+
+    // --- 課題---
+    override fun onResume() {
+        super.onResume()
+        // ログインなら「お気に入り」ボタン表示する。そうでなければ非表示
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            favoriteBtn.setVisibility(View.VISIBLE)
+            favoriteBtn.text = "お気に入り（登録）"
+        } else {
+            favoriteBtn.setVisibility(View.INVISIBLE)
+        }
+
+        // favoriteの情報を取る、ログインしていたら
+        if (user != null) {
+            val dataBaseReference = FirebaseDatabase.getInstance().reference
+            mFavoriteRef = dataBaseReference.child(FavoritePATH)
+            mFavoriteRef.addChildEventListener(mFavoriteListener)
+        }
+
+    }
+
+    // --- ここまで---
 }

@@ -70,11 +70,17 @@ class LoginActivity : AppCompatActivity() {
 
                     // 表示名をPrefarenceに保存する
                     saveName(name)
+
                 } else {
                     userRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val data = snapshot.value as Map<*, *>?
                             saveName(data!!["name"] as String)
+
+                            // 課題の確認のため追加
+                            val tempkey = snapshot.key
+                            saveName2(tempkey as String)
+
                         }
 
                         override fun onCancelled(firebaseError: DatabaseError) {}
@@ -162,6 +168,14 @@ class LoginActivity : AppCompatActivity() {
         val sp = PreferenceManager.getDefaultSharedPreferences(this)
         val editor = sp.edit()
         editor.putString(NameKEY, name)
+        editor.commit()
+    }
+
+    private fun saveName2(tempkey: String) {
+        // Preferenceに保存する
+        val sp = PreferenceManager.getDefaultSharedPreferences(this)
+        val editor = sp.edit()
+        editor.putString(LoginID, tempkey)
         editor.commit()
     }
 }

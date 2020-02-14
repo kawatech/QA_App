@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var mToolbar: Toolbar
     private var mGenre = 0
-    private val mFavorite ="dummy"                  // 仮にdummyとしておく
+//    private val mFavorite ="dummy"                  // 仮にdummyとしておく
 
     // --- ここから 8.5---
     private lateinit var mDatabaseReference: DatabaseReference
@@ -61,11 +61,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
 
-
-//            val question = Question(title, body, name, uid, dataSnapshot.key ?: "",
-//                mGenre, bytes, answerArrayList)
+ //           val favoriteArrayList = ArrayList<String>()
             val question = Question(title, body, name, uid, dataSnapshot.key ?: "",
-                mGenre, bytes, answerArrayList, favoriteArrayList)
+                mGenre, bytes, answerArrayList)
+ //           val question = Question(title, body, name, uid, dataSnapshot.key ?: "",
+ //               mGenre, bytes, answerArrayList, favoriteArrayList)
 
 
             mQuestionArrayList.add(question)

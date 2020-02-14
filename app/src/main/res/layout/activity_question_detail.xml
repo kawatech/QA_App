@@ -18,7 +18,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="お気に入り（登録）"
+            android:text="お気に入り"
             android:id="@+id/favoriteBtn"
             android:visibility="invisible"/>
 
