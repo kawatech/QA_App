@@ -16,12 +16,18 @@
         android:orientation="vertical">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="お気に入り"
-            android:id="@+id/favoriteBtn"
-            android:visibility="invisible"/>
+            android:text="お気に入り（登録）"
+            android:id="@+id/favoriteBtnAdd"
+            android:visibility="gone"/>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="お気に入り（削除）"
+            android:id="@+id/favoriteBtnDel"
+            android:visibility="gone"/>
 
         <ListView
             android:layout_width="match_parent"

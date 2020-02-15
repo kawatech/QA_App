@@ -15,8 +15,12 @@ class QuestionDetailActivity : AppCompatActivity() {
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
     private lateinit var mFavoriteRef: DatabaseReference
+    private lateinit var mCheckFavRef: DatabaseReference
 
-// onChile*() の関数はやることが無くても全部入れておく。
+    // favoriteの確認用フラグ、一致するものがあったらtureにする
+    private var mIsCheckFav = false
+
+    // onChile*() の関数はやることが無くても全部入れておく。
     private val mFavoriteListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val favoriteUid = dataSnapshot.key ?: ""
@@ -24,11 +28,23 @@ class QuestionDetailActivity : AppCompatActivity() {
             // Preferenceからログイン中のユーザーIDを取得する
             val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             val curruid = sp.getString(LoginID, "")
-
+            val currQuestionUid = mQuestion.questionUid
             // ログインユーザーIDと同じものがあれば、ボタン表示を削除にする
-            if (favoriteUid == curruid) {
-                favoriteBtn.text = "お気に入り（削除）"
+            // ユーザーIDが一致してかつQuestionUidで一致するものがあれば、削除ボタンにする
+
+       //     if(mIsCheckFav != true) {
+                val dataBaseReference = FirebaseDatabase.getInstance().reference
+                mCheckFavRef =
+                    dataBaseReference.child(FavoritePATH).child(favoriteUid).child(currQuestionUid)
+                mCheckFavRef.addChildEventListener(mCheckFavListener)
+        //    }
+            // mIsCheckFavがtrueなら一致するものがあった
+            if (mIsCheckFav) {
+              //  favoriteBtnAdd.setVisibility(View.GONE)
+              //  favoriteBtnDel.setVisibility(View.VISIBLE)
             }
+
+
         }
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
 
@@ -46,6 +62,34 @@ class QuestionDetailActivity : AppCompatActivity() {
 
         }
     }
+
+    private val mCheckFavListener = object : ChildEventListener {
+
+        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
+            mIsCheckFav = true
+            favoriteBtnAdd.setVisibility(View.GONE)
+            favoriteBtnDel.setVisibility(View.VISIBLE)
+        }
+
+        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
+
+        }
+
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+
+        }
+
+        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {
+
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
+        }
+    }
+
+
+
 
 
 
@@ -126,11 +170,9 @@ class QuestionDetailActivity : AppCompatActivity() {
  //       val favoRef =  dataBaseReference.child(FavoritePATH).child(mQuestion.questionUid)
 
         // お気に入りボタンをタップしたとき、ログインしているユーザーの「お気に入り」に登録
-        // favoriteになければ追加する。あれば削除する。
-        favoriteBtn.setOnClickListener { v ->
+        favoriteBtnAdd.setOnClickListener { v ->
          //   favoritBtn.text="お気に入り（削除）"
             val uid = mQuestion.uid
-        //db    val uid = FirebaseAuth.getInstance().currentUser.toString()     // これは停止する
             val quid = mQuestion.questionUid
             val genre = mQuestion.genre
 
@@ -142,7 +184,22 @@ class QuestionDetailActivity : AppCompatActivity() {
            //favoritRef.removeValue()                 // 削除するとき、favoriteから全部なくなる
         }
 
+        // 「お気に入り（削除）」ボタンをタッチしたとき
+        favoriteBtnDel.setOnClickListener { v ->
+            val uid = mQuestion.uid
+            val quid = mQuestion.questionUid
 
+            val dataBaseReference = FirebaseDatabase.getInstance().reference
+            val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
+
+            //favoritRef.setValue(data)             // 登録するとき
+            favoritRef.removeValue()                 // 削除するとき
+
+            // ボタンを登録にする
+            favoriteBtnDel.setVisibility(View.GONE)
+            favoriteBtnAdd.setVisibility(View.VISIBLE)
+            
+        }
 
 
         fab.setOnClickListener {
@@ -173,19 +230,23 @@ class QuestionDetailActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         // ログインなら「お気に入り」ボタン表示する。そうでなければ非表示
-        val user = FirebaseAuth.getInstance().currentUser
+        // ボタンの表示、非表示は判定の場所で行う
+     /*
         if (user != null) {
             favoriteBtn.setVisibility(View.VISIBLE)
             favoriteBtn.text = "お気に入り（登録）"
         } else {
             favoriteBtn.setVisibility(View.INVISIBLE)
         }
-
+*/
         // favoriteの情報を取る、ログインしていたら
+        val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             val dataBaseReference = FirebaseDatabase.getInstance().reference
             mFavoriteRef = dataBaseReference.child(FavoritePATH)
             mFavoriteRef.addChildEventListener(mFavoriteListener)
+            // ここでは登録ボタンとしておく
+            favoriteBtnAdd.setVisibility(View.VISIBLE)
         }
 
     }
