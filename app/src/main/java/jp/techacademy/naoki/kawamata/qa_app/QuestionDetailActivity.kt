@@ -198,7 +198,7 @@ class QuestionDetailActivity : AppCompatActivity() {
             // ボタンを登録にする
             favoriteBtnDel.setVisibility(View.GONE)
             favoriteBtnAdd.setVisibility(View.VISIBLE)
-            
+
         }
 
 

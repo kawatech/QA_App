@@ -213,6 +213,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         val id = item.itemId
+        val user = FirebaseAuth.getInstance().currentUser
 
         if (id == R.id.nav_hobby) {
             mToolbar.title = "趣味"
@@ -227,8 +228,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mToolbar.title = "コンピューター"
             mGenre = 4
         } else if(id == R.id.nav_favority) {
-            val intent = Intent(applicationContext, FavoritiesActivity::class.java)
-            startActivity(intent)
+            if (user != null) {
+                val intent = Intent(applicationContext, FavoritiesActivity::class.java)
+                startActivity(intent)
+            }else{
+                Snackbar.make(findViewById(android.R.id.content), "ログインしていません", Snackbar.LENGTH_LONG).show()
+            }
         }
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
