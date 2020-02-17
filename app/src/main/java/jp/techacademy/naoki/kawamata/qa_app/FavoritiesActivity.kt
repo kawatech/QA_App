@@ -1,5 +1,6 @@
 package jp.techacademy.naoki.kawamata.qa_app
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -129,7 +130,13 @@ class FavoritiesActivity : AppCompatActivity() {
         mFavoriteUidRef = mDatabaseReference.child(FavoritePATH).child(curruid)
         mFavoriteUidRef.addChildEventListener(mFavoriteUidListener)
 
-
+// 17回目
+        mListView.setOnItemClickListener { parent, view, position, id ->
+            // Questionのインスタンスを渡して質問詳細画面を起動する
+            val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
+            intent.putExtra("question", mQuestionArrayList[position])
+            startActivity(intent)
+        }
 
 
         setSupportActionBar(toolbar)
