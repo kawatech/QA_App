@@ -78,8 +78,8 @@ class LoginActivity : AppCompatActivity() {
                             saveName(data!!["name"] as String)
 
                             // 課題の確認のため追加
-                            val tempkey = snapshot.key
-                            saveName2(tempkey as String)
+                         //   val tempkey = snapshot.key
+                         //   saveName2(tempkey as String)
 
                         }
 
@@ -171,6 +171,7 @@ class LoginActivity : AppCompatActivity() {
         editor.commit()
     }
 
+    /*
     private fun saveName2(tempkey: String) {
         // Preferenceに保存する
         val sp = PreferenceManager.getDefaultSharedPreferences(this)
@@ -178,4 +179,6 @@ class LoginActivity : AppCompatActivity() {
         editor.putString(LoginID, tempkey)
         editor.commit()
     }
+    */
+
 }

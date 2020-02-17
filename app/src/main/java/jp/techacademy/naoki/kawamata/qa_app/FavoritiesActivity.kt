@@ -1,11 +1,11 @@
 package jp.techacademy.naoki.kawamata.qa_app
 
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Base64
 import android.widget.ListView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_favorities.*
 
@@ -28,9 +28,12 @@ class FavoritiesActivity : AppCompatActivity() {
             val fgenre = map["genre"]
 
             // Preferenceからログイン中のユーザーIDを取得する
-            val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            val curruid = sp.getString(LoginID, "")
-            val currQuestionUid = mQuestion.questionUid
+         //   val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+         //   val curruid = sp.getString(LoginID, "")
+
+         //   val curruid = FirebaseAuth.getInstance().currentUser!!.uid
+
+         //   val currQuestionUid = mQuestion.questionUid
             // ログインユーザーIDと同じものがあれば、ボタン表示を削除にする
             // ユーザーIDが一致してかつQuestionUidで一致するものがあれば、削除ボタンにする
 
@@ -117,9 +120,9 @@ class FavoritiesActivity : AppCompatActivity() {
 
 
         // Preferenceからログイン中のユーザーIDを取得する
-        val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val curruid = sp.getString(LoginID, "")
-
+     //   val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+     //   val curruid = sp.getString(LoginID, "")
+        val curruid = FirebaseAuth.getInstance().currentUser!!.uid
         val mDatabaseReference = FirebaseDatabase.getInstance().reference
         mAdapter.setQuestionArrayList(mQuestionArrayList)
         mListView.adapter = mAdapter

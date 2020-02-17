@@ -2,7 +2,6 @@ package jp.techacademy.naoki.kawamata.qa_app
 
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.google.firebase.auth.FirebaseAuth
@@ -26,8 +25,10 @@ class QuestionDetailActivity : AppCompatActivity() {
             val favoriteUid = dataSnapshot.key ?: ""
 
             // Preferenceからログイン中のユーザーIDを取得する
-            val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            val curruid = sp.getString(LoginID, "")
+        //    val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        //    val curruid = sp.getString(LoginID, "")
+
+         //   val curruid = FirebaseAuth.getInstance().currentUser!!.uid
             val currQuestionUid = mQuestion.questionUid
             // ログインユーザーIDと同じものがあれば、ボタン表示を削除にする
             // ユーザーIDが一致してかつQuestionUidで一致するものがあれば、削除ボタンにする
@@ -157,8 +158,10 @@ class QuestionDetailActivity : AppCompatActivity() {
         val dataBaseReference = FirebaseDatabase.getInstance().reference
 
         // Preferenceからログイン中のユーザーIDを取得する
-        val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val curruid = sp.getString(LoginID, "")
+     //   val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+     //   val curruid = sp.getString(LoginID, "")
+
+
 
         // お気に入りボタンをタップしたとき、ログインしているユーザーの「お気に入り」に登録
         favoriteBtnAdd.setOnClickListener { v ->
@@ -166,8 +169,12 @@ class QuestionDetailActivity : AppCompatActivity() {
             val quid = mQuestion.questionUid
             val genre = mQuestion.genre
 
+
+            val curruid = FirebaseAuth.getInstance().currentUser!!.uid
+
+
             val dataBaseReference = FirebaseDatabase.getInstance().reference
-        //    val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
+         //   val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
             val favoritRef = dataBaseReference.child(FavoritePATH).child(curruid).child(quid)
             val data = HashMap<String, String>()
             data["genre"] = genre.toString()
@@ -178,7 +185,7 @@ class QuestionDetailActivity : AppCompatActivity() {
         favoriteBtnDel.setOnClickListener { v ->
      //       val uid = mQuestion.uid
             val quid = mQuestion.questionUid
-
+            val curruid = FirebaseAuth.getInstance().currentUser!!.uid
             val dataBaseReference = FirebaseDatabase.getInstance().reference
          //   val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
             val favoritRef = dataBaseReference.child(FavoritePATH).child(curruid).child(quid)
