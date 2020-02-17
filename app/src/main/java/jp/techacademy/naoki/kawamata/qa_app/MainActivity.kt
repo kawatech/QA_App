@@ -152,6 +152,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
+
+
+
+
+
+
+
         navigationView.setNavigationItemSelectedListener(this)
 
 // --- ここから 8.5---
@@ -180,7 +187,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onResume() {
         super.onResume()
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        val menu = navigationView.menu
+        val likemenu = menu?.findItem(R.id.nav_favority)
 
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            likemenu?.isVisible = true // 表示
+        }else {
+            likemenu?.isVisible = false // 非表示
+        }
         // 1:趣味を既定の選択とする
         if(mGenre == 0) {
             onNavigationItemSelected(navigationView.menu.getItem(0))
