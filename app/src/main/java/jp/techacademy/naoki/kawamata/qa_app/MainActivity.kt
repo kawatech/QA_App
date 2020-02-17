@@ -61,13 +61,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
 
- //           val favoriteArrayList = ArrayList<String>()
             val question = Question(title, body, name, uid, dataSnapshot.key ?: "",
                 mGenre, bytes, answerArrayList)
- //           val question = Question(title, body, name, uid, dataSnapshot.key ?: "",
- //               mGenre, bytes, answerArrayList, favoriteArrayList)
 
 
+            // ここは最後の追加して1回で終わる
             mQuestionArrayList.add(question)
             mAdapter.notifyDataSetChanged()
         }
@@ -227,9 +225,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else if (id == R.id.nav_compter) {
             mToolbar.title = "コンピューター"
             mGenre = 4
+
+            // 課題、お気に入り一覧表示画面に遷移する
         } else if(id == R.id.nav_favority) {
             if (user != null) {
                 val intent = Intent(applicationContext, FavoritiesActivity::class.java)
+                // mQuestionを参照できるように、引数をどうするか、positionではエラーになる
+                intent.putExtra("question", mQuestionArrayList[0])
                 startActivity(intent)
             }else{
                 Snackbar.make(findViewById(android.R.id.content), "ログインしていません", Snackbar.LENGTH_LONG).show()
@@ -251,6 +253,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mGenreRef!!.removeEventListener(mEventListener)
         }
         mGenreRef = mDatabaseReference.child(ContentsPATH).child(mGenre.toString())
+
         mGenreRef!!.addChildEventListener(mEventListener)
         // --- ここまで追加する ---
 

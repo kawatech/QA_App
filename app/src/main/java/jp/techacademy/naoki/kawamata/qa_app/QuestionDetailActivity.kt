@@ -20,7 +20,7 @@ class QuestionDetailActivity : AppCompatActivity() {
     // favoriteの確認用フラグ、一致するものがあったらtureにする
     private var mIsCheckFav = false
 
-    // onChile*() の関数はやることが無くても全部入れておく。
+    // onChild*() の関数はやることが無くても全部入れておく。
     private val mFavoriteListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val favoriteUid = dataSnapshot.key ?: ""
@@ -39,10 +39,10 @@ class QuestionDetailActivity : AppCompatActivity() {
                 mCheckFavRef.addChildEventListener(mCheckFavListener)
         //    }
             // mIsCheckFavがtrueなら一致するものがあった
-            if (mIsCheckFav) {
+        //    if (mIsCheckFav) {
               //  favoriteBtnAdd.setVisibility(View.GONE)
               //  favoriteBtnDel.setVisibility(View.VISIBLE)
-            }
+        //    }
 
 
         }
@@ -145,8 +145,7 @@ class QuestionDetailActivity : AppCompatActivity() {
         mQuestion = extras.get("question") as Question
 
         title = mQuestion.title
-  //      title = mQuestion.favorite       // お気に入りにアクセス
-  //      title =mQuestion.uid
+
 
                 // ListViewの準備
         mAdapter = QuestionDetailListAdapter(this, mQuestion)
@@ -155,44 +154,35 @@ class QuestionDetailActivity : AppCompatActivity() {
 
 
 
-        /*
-            val map = dataSnapshot.value as Map<String, String>
-
-            val favoriteMap = map["favorite"] as Map<String, String>?
-            if (favoriteMap != null) {
-                for (key in favoriteMap.keys) {
-                    //           favoriteArrayList.add(key)
-                }
-            }
-*/
-
         val dataBaseReference = FirebaseDatabase.getInstance().reference
- //       val favoRef =  dataBaseReference.child(FavoritePATH).child(mQuestion.questionUid)
+
+        // Preferenceからログイン中のユーザーIDを取得する
+        val sp = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val curruid = sp.getString(LoginID, "")
 
         // お気に入りボタンをタップしたとき、ログインしているユーザーの「お気に入り」に登録
         favoriteBtnAdd.setOnClickListener { v ->
-         //   favoritBtn.text="お気に入り（削除）"
-            val uid = mQuestion.uid
+     //       val uid = mQuestion.uid
             val quid = mQuestion.questionUid
             val genre = mQuestion.genre
 
             val dataBaseReference = FirebaseDatabase.getInstance().reference
-            val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
+        //    val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
+            val favoritRef = dataBaseReference.child(FavoritePATH).child(curruid).child(quid)
             val data = HashMap<String, String>()
             data["genre"] = genre.toString()
             favoritRef.setValue(data)             // 登録するとき
-           //favoritRef.removeValue()                 // 削除するとき、favoriteから全部なくなる
         }
 
         // 「お気に入り（削除）」ボタンをタッチしたとき
         favoriteBtnDel.setOnClickListener { v ->
-            val uid = mQuestion.uid
+     //       val uid = mQuestion.uid
             val quid = mQuestion.questionUid
 
             val dataBaseReference = FirebaseDatabase.getInstance().reference
-            val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
+         //   val favoritRef = dataBaseReference.child(FavoritePATH).child(uid).child(quid)
+            val favoritRef = dataBaseReference.child(FavoritePATH).child(curruid).child(quid)
 
-            //favoritRef.setValue(data)             // 登録するとき
             favoritRef.removeValue()                 // 削除するとき
 
             // ボタンを登録にする
@@ -231,14 +221,7 @@ class QuestionDetailActivity : AppCompatActivity() {
         super.onResume()
         // ログインなら「お気に入り」ボタン表示する。そうでなければ非表示
         // ボタンの表示、非表示は判定の場所で行う
-     /*
-        if (user != null) {
-            favoriteBtn.setVisibility(View.VISIBLE)
-            favoriteBtn.text = "お気に入り（登録）"
-        } else {
-            favoriteBtn.setVisibility(View.INVISIBLE)
-        }
-*/
+
         // favoriteの情報を取る、ログインしていたら
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
